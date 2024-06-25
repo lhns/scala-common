@@ -1,0 +1,184 @@
+lazy val scalaVersions = Seq("3.4.2")
+
+ThisBuild / scalaVersion := scalaVersions.head
+ThisBuild / versionScheme := Some("early-semver")
+ThisBuild / organization := "de.lhns"
+name := (app.projectRefs.head / name).value
+
+val V = new {
+  val catsEffect = "3.5.4"
+  val catsEffectCps = "0.5.0-cf857d6-20240517T140910Z-SNAPSHOT"
+  val catsTagless = "0.16.1"
+  val dumbo = "0.3.3"
+  val fs2 = "3.10.2"
+  val http4s = "0.23.27"
+  val http4sOtel4s = "0.8.0"
+  val julToSlf4j = "2.0.13"
+  val log4Cats = "2.7.0"
+  val logbackClassic = "1.5.6"
+  val munitCatsEffect = "2.0.0"
+  val otel4s = "0.8.0"
+  val otelAutoconfigure = "1.38.0"
+  val otelIncubator = "1.39.0-alpha"
+  val otelLogback = "1.32.1-alpha"
+  val otelOtlp = "1.39.0"
+  val proxyVole = "1.1.4"
+  val scalaJavaTime = "2.6.0"
+  val scalajsJavaSecurerandom = "1.0.0"
+  val skunk = "1.0.0-M6"
+  val trustmanagerUtils = "1.0.0"
+}
+
+lazy val commonSettings: SettingsDefinition = Def.settings(
+  version := {
+    val Tag = "refs/tags/v?([0-9]+(?:\\.[0-9]+)+(?:[+-].*)?)".r
+    sys.env.get("CI_VERSION").collect { case Tag(tag) => tag }
+      .getOrElse("0.0.1-SNAPSHOT")
+  },
+
+  licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0")),
+
+  homepage := scmInfo.value.map(_.browseUrl),
+  scmInfo := Some(
+    ScmInfo(
+      url("https://github.com/lhns/fs2-functork"),
+      "scm:git@github.com:lhns/fs2-functork.git"
+    )
+  ),
+  developers := List(
+    Developer(id = "lhns", name = "Pierre Kisters", email = "pierrekisters@gmail.com", url = url("https://github.com/lhns/"))
+  ),
+
+  libraryDependencies ++= Seq(
+    "ch.qos.logback" % "logback-classic" % V.logbackClassic % Test,
+    "org.typelevel" %%% "munit-cats-effect" % V.munitCatsEffect % Test,
+  ),
+
+  testFrameworks += new TestFramework("munit.Framework"),
+
+  scalacOptions ++= Seq(
+    "-deprecation", // Emit warning and location for usages of deprecated APIs.
+    "-encoding", "utf-8", // Specify character encoding used by source files.
+    "-explaintypes", // Explain type errors in more detail.
+    "-feature", // Emit warning and location for usages of features that should be imported explicitly.
+    "-language:existentials", // Existential types (besides wildcard types) can be written and inferred
+    "-language:experimental.macros", // Allow macro definition (besides implementation and application)
+    "-language:higherKinds", // Allow higher-kinded types
+    "-language:implicitConversions", // Allow definition of implicit functions called views
+    "-unchecked", // Enable additional warnings where generated code depends on assumptions.
+    "-Xfatal-warnings", // Fail the compilation if there are any warnings.
+    "-Wshadow:private-shadow", // A private field (or class parameter) shadows a superclass field.
+    "-Wshadow:type-parameter-shadow", // A local type parameter shadows a type already in scope.
+    "-Ykind-projector:underscores",
+    "-Wnonunit-statement",
+    "-experimental"
+  ),
+
+  Test / scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)),
+
+  Compile / doc / sources := Seq.empty,
+
+  publishMavenStyle := true,
+
+  publishTo := sonatypePublishToBundle.value,
+
+  sonatypeCredentialHost := "s01.oss.sonatype.org",
+
+  credentials ++= (for {
+    username <- sys.env.get("SONATYPE_USERNAME")
+    password <- sys.env.get("SONATYPE_PASSWORD")
+  } yield Credentials(
+    "Sonatype Nexus Repository Manager",
+    sonatypeCredentialHost.value,
+    username,
+    password
+  )).toList,
+)
+
+lazy val root: Project = project.in(file("."))
+  .settings(commonSettings)
+  .settings(
+    publishArtifact := false,
+    publish / skip := true
+  )
+  .aggregate(app.projectRefs: _*)
+  .aggregate(httpClient.projectRefs: _*)
+  .aggregate(httpServer.projectRefs: _*)
+  .aggregate(skunk.projectRefs: _*)
+
+lazy val app = projectMatrix.in(file("mod/app"))
+  .settings(commonSettings)
+  .settings(
+    name := "common-app",
+    resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots",
+    libraryDependencies ++= Seq(
+      "co.fs2" %%% "fs2-io" % V.fs2,
+      "de.lhns" %%% "cats-effect-cps" % V.catsEffectCps,
+      "org.slf4j" % "jul-to-slf4j" % V.julToSlf4j,
+      "org.typelevel" %%% "cats-effect" % V.catsEffect,
+      "org.typelevel" %%% "cats-tagless-core" % V.catsTagless,
+      "org.typelevel" %%% "log4cats-core" % V.log4Cats,
+      "org.typelevel" %%% "otel4s-core" % V.otel4s,
+    ),
+  )
+  .jvmPlatform(scalaVersions, Seq(
+    libraryDependencies ++= Seq(
+      "ch.qos.logback" % "logback-classic" % V.logbackClassic,
+      "de.lhns" %% "scala-trustmanager-utils" % V.trustmanagerUtils,
+      "io.opentelemetry" % "opentelemetry-exporter-otlp" % V.otelOtlp,
+      "io.opentelemetry" % "opentelemetry-sdk-extension-autoconfigure" % V.otelAutoconfigure,
+      "io.opentelemetry" % "opentelemetry-sdk-extension-incubator" % V.otelIncubator,
+      "io.opentelemetry.instrumentation" % "opentelemetry-logback-appender-1.0" % V.otelLogback,
+      "org.bidib.com.github.markusbernhardt" % "proxy-vole" % V.proxyVole,
+      "org.typelevel" %% "log4cats-slf4j" % V.log4Cats,
+      "org.typelevel" %% "otel4s-oteljava" % V.otel4s,
+    )
+  ))
+  .jsPlatform(scalaVersions, Seq(
+    libraryDependencies ++= Seq(
+      "io.github.cquiroz" %%% "scala-java-time" % V.scalaJavaTime,
+      "io.github.cquiroz" %%% "scala-java-time-tzdb" % V.scalaJavaTime,
+      "org.scala-js" %%% "scalajs-java-securerandom" % V.scalajsJavaSecurerandom cross CrossVersion.for3Use2_13
+    )
+  ))
+
+lazy val http = projectMatrix.in(file("mod/http"))
+  .dependsOn(app % "compile->compile;test->test")
+  .settings(commonSettings)
+  .settings(
+    name := "common-http",
+    libraryDependencies ++= Seq(),
+  )
+  .jvmPlatform(scalaVersions)
+
+lazy val httpClient = projectMatrix.in(file("mod/http-client"))
+  .dependsOn(http % "compile->compile;test->test")
+  .settings(commonSettings)
+  .settings(
+    name := "common-http-client",
+    libraryDependencies ++= Seq(),
+  )
+  .jvmPlatform(scalaVersions)
+
+lazy val httpServer = projectMatrix.in(file("mod/http-server"))
+  .dependsOn(http % "compile->compile;test->test")
+  .settings(commonSettings)
+  .settings(
+    name := "common-http-server",
+    libraryDependencies ++= Seq(
+    ),
+  )
+  .jvmPlatform(scalaVersions)
+
+lazy val skunk = projectMatrix.in(file("mod/skunk"))
+  .dependsOn(app % "compile->compile;test->test")
+  .settings(commonSettings)
+  .settings(
+    name := "common-skunk",
+    libraryDependencySchemes += "org.typelevel" %% "otel4s-core-trace" % VersionScheme.Always,
+    libraryDependencies ++= Seq(
+      "dev.rolang" %% "dumbo" % V.dumbo,
+      "org.tpolecat" %% "skunk-core" % V.skunk,
+    ),
+  )
+  .jvmPlatform(scalaVersions)
