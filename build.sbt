@@ -12,6 +12,8 @@ val V = new {
   val dumbo = "0.3.3"
   val fs2 = "3.10.2"
   val http4s = "0.23.27"
+  val http4sDom = "0.2.8"
+  val http4sJdkHttpClient = "0.9.1"
   val http4sOtel4s = "0.8.0"
   val julToSlf4j = "2.0.13"
   val log4Cats = "2.7.0"
@@ -26,6 +28,7 @@ val V = new {
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
   val skunk = "1.0.0-M6"
+  val tapir = "1.10.8"
   val trustmanagerUtils = "1.0.0"
 }
 
@@ -148,18 +151,32 @@ lazy val http = projectMatrix.in(file("mod/http"))
   .settings(commonSettings)
   .settings(
     name := "common-http",
-    libraryDependencies ++= Seq(),
+    libraryDependencies ++= Seq(
+      "org.http4s" %% "http4s-otel4s-middleware" % V.http4sOtel4s
+    ),
   )
   .jvmPlatform(scalaVersions)
+  .jsPlatform(scalaVersions)
 
 lazy val httpClient = projectMatrix.in(file("mod/http-client"))
   .dependsOn(http % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
     name := "common-http-client",
-    libraryDependencies ++= Seq(),
+    libraryDependencies ++= Seq(
+      "org.http4s" %% "http4s-client" % V.http4s,
+    ),
   )
-  .jvmPlatform(scalaVersions)
+  .jvmPlatform(scalaVersions, Seq(
+    libraryDependencies ++= Seq(
+      "org.http4s" %% "http4s-jdk-http-client" % V.http4sJdkHttpClient,
+    )
+  ))
+  .jsPlatform(scalaVersions, Seq(
+    libraryDependencies ++= Seq(
+      "org.http4s" %%% "http4s-dom" % V.http4sDom
+    )
+  ))
 
 lazy val httpServer = projectMatrix.in(file("mod/http-server"))
   .dependsOn(http % "compile->compile;test->test")
@@ -167,6 +184,11 @@ lazy val httpServer = projectMatrix.in(file("mod/http-server"))
   .settings(
     name := "common-http-server",
     libraryDependencies ++= Seq(
+      "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs" % V.tapir,
+      "com.softwaremill.sttp.tapir" %% "tapir-redoc-bundle" % V.tapir,
+      "com.softwaremill.sttp.tapir" %% "tapir-cats" % V.tapir,
+      "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % V.tapir,
+      "org.http4s" %% "http4s-ember-server" % V.http4s,
     ),
   )
   .jvmPlatform(scalaVersions)

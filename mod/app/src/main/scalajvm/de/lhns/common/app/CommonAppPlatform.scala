@@ -1,7 +1,7 @@
 package de.lhns.common.app
 
 import cats.effect.std.Env
-import cats.effect.{ExitCode, IO, Resource}
+import cats.effect.{ExitCode, IO, Resource, ResourceApp}
 import com.github.markusbernhardt.proxy.ProxySearch
 import de.lhns.trustmanager.TrustManagers.*
 import io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender
@@ -12,7 +12,7 @@ import org.typelevel.otel4s.oteljava.OtelJava
 import java.net.ProxySelector
 import scala.util.chaining.*
 
-trait CommonAppPlatform {
+trait CommonAppPlatform extends ResourceApp {
   self: CommonApp =>
 
   override def run(args: List[String]): Resource[IO, ExitCode] = {
