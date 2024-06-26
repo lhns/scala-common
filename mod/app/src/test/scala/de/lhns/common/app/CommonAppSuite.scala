@@ -2,10 +2,10 @@ package de.lhns.common.app
 
 import cats.effect.{ExitCode, IO, Resource}
 import cats.syntax.all.*
-import munit.FunSuite
+import munit.{CatsEffectSuite, FunSuite}
 import org.typelevel.log4cats.{Logger, LoggerFactory}
 
-class CommonAppSuite extends FunSuite {
+class CommonAppSuite extends CatsEffectSuite {
   object CommonAppTest extends CommonApp {
     override def run(context: CommonApp.Context[IO]): Resource[IO, ExitCode] = {
       import context.given
@@ -17,6 +17,6 @@ class CommonAppSuite extends FunSuite {
   }
 
   test("create CommonApp") {
-    CommonAppTest.main(Array.empty)
+    CommonAppTest.run(List.empty).use_
   }
 }
