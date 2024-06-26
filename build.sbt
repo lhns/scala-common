@@ -114,7 +114,6 @@ lazy val app = projectMatrix.in(file("mod/app"))
     libraryDependencies ++= Seq(
       "co.fs2" %%% "fs2-io" % V.fs2,
       "de.lhns" %%% "cats-effect-cps" % V.catsEffectCps,
-      "org.slf4j" % "jul-to-slf4j" % V.julToSlf4j,
       "org.typelevel" %%% "cats-effect" % V.catsEffect,
       "org.typelevel" %%% "cats-tagless-core" % V.catsTagless,
       "org.typelevel" %%% "log4cats-core" % V.log4Cats,
@@ -130,6 +129,7 @@ lazy val app = projectMatrix.in(file("mod/app"))
       "io.opentelemetry" % "opentelemetry-sdk-extension-incubator" % V.otelIncubator,
       "io.opentelemetry.instrumentation" % "opentelemetry-logback-appender-1.0" % V.otelLogback,
       "org.bidib.com.github.markusbernhardt" % "proxy-vole" % V.proxyVole,
+      "org.slf4j" % "jul-to-slf4j" % V.julToSlf4j,
       "org.typelevel" %% "log4cats-slf4j" % V.log4Cats,
       "org.typelevel" %% "otel4s-oteljava" % V.otel4s,
     )
@@ -138,6 +138,7 @@ lazy val app = projectMatrix.in(file("mod/app"))
     libraryDependencies ++= Seq(
       "io.github.cquiroz" %%% "scala-java-time" % V.scalaJavaTime,
       "io.github.cquiroz" %%% "scala-java-time-tzdb" % V.scalaJavaTime,
+      "org.typelevel" %%% "log4cats-js-console" % V.log4Cats,
       "org.scala-js" %%% "scalajs-java-securerandom" % V.scalajsJavaSecurerandom cross CrossVersion.for3Use2_13
     )
   ))
