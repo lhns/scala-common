@@ -104,15 +104,16 @@ lazy val root: Project = project.in(file("."))
     publishArtifact := false,
     publish / skip := true
   )
+  .aggregate(core.projectRefs: _*)
   .aggregate(app.projectRefs: _*)
   .aggregate(httpClient.projectRefs: _*)
   .aggregate(httpServer.projectRefs: _*)
   .aggregate(skunk.projectRefs: _*)
 
-lazy val app = projectMatrix.in(file("mod/app"))
+lazy val core = projectMatrix.in(file("mod/core"))
   .settings(commonSettings)
   .settings(
-    name := "common-app",
+    name := "common-core",
     resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots",
     libraryDependencies ++= Seq(
       "co.fs2" %%% "fs2-io" % V.fs2,
@@ -122,6 +123,20 @@ lazy val app = projectMatrix.in(file("mod/app"))
       "org.typelevel" %%% "log4cats-core" % V.log4Cats,
       "org.typelevel" %%% "otel4s-core" % V.otel4s,
     ),
+  )
+  .jvmPlatform(scalaVersions)
+  .jsPlatform(scalaVersions, Seq(
+    libraryDependencies ++= Seq(
+      "io.github.cquiroz" %%% "scala-java-time" % V.scalaJavaTime,
+      "org.scala-js" %%% "scalajs-java-securerandom" % V.scalajsJavaSecurerandom cross CrossVersion.for3Use2_13
+    )
+  ))
+
+lazy val app = projectMatrix.in(file("mod/app"))
+  .dependsOn(core % "compile->compile;test->test")
+  .settings(commonSettings)
+  .settings(
+    name := "common-app",
   )
   .jvmPlatform(scalaVersions, Seq(
     libraryDependencies ++= Seq(
@@ -139,15 +154,13 @@ lazy val app = projectMatrix.in(file("mod/app"))
   ))
   .jsPlatform(scalaVersions, Seq(
     libraryDependencies ++= Seq(
-      "io.github.cquiroz" %%% "scala-java-time" % V.scalaJavaTime,
       "io.github.cquiroz" %%% "scala-java-time-tzdb" % V.scalaJavaTime,
-      "org.typelevel" %%% "log4cats-js-console" % V.log4Cats,
-      "org.scala-js" %%% "scalajs-java-securerandom" % V.scalajsJavaSecurerandom cross CrossVersion.for3Use2_13
+      "org.typelevel" %%% "log4cats-js-console" % V.log4Cats
     )
   ))
 
 lazy val http = projectMatrix.in(file("mod/http"))
-  .dependsOn(app % "compile->compile;test->test")
+  .dependsOn(core % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
     name := "common-http",
@@ -194,7 +207,7 @@ lazy val httpServer = projectMatrix.in(file("mod/http-server"))
   .jvmPlatform(scalaVersions)
 
 lazy val skunk = projectMatrix.in(file("mod/skunk"))
-  .dependsOn(app % "compile->compile;test->test")
+  .dependsOn(core % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
     name := "common-skunk",
