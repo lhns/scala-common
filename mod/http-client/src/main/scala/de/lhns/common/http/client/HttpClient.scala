@@ -1,6 +1,6 @@
 package de.lhns.common.http.client
 
-import cats.effect.Async
+import cats.effect.{Async, Resource}
 import fs2.io.net.Network
 import org.http4s.Request
 import org.http4s.client.middleware.Metrics
@@ -9,7 +9,7 @@ import org.typelevel.otel4s.Attributes
 import org.typelevel.otel4s.metrics.Meter
 import org.typelevel.otel4s.trace.Tracer
 import cats.effect.syntax.all.*
-import org.http4s.otel4s.middleware.{ClientMiddleware => Otel4sClientMiddleware}
+import org.http4s.otel4s.middleware.ClientMiddleware as Otel4sClientMiddleware
 import org.http4s.client.Client
 
 object HttpClient {
