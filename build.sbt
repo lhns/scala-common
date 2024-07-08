@@ -28,7 +28,7 @@ val V = new {
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
   val skunk = "1.0.0-M6"
-  val tapir = "1.10.8"
+  val tapir = "1.10.12"
   val trustmanagerUtils = "1.0.0"
 }
 
@@ -152,7 +152,7 @@ lazy val http = projectMatrix.in(file("mod/http"))
   .settings(
     name := "common-http",
     libraryDependencies ++= Seq(
-      "org.http4s" %% "http4s-otel4s-middleware" % V.http4sOtel4s
+      "org.http4s" %%% "http4s-otel4s-middleware" % V.http4sOtel4s
     ),
   )
   .jvmPlatform(scalaVersions)
@@ -164,7 +164,7 @@ lazy val httpClient = projectMatrix.in(file("mod/http-client"))
   .settings(
     name := "common-http-client",
     libraryDependencies ++= Seq(
-      "org.http4s" %% "http4s-client" % V.http4s,
+      "org.http4s" %%% "http4s-client" % V.http4s,
     ),
   )
   .jvmPlatform(scalaVersions, Seq(
