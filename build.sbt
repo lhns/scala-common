@@ -114,7 +114,7 @@ lazy val root: Project = project.in(file("."))
 lazy val core = projectMatrix.in(file("modules/core"))
   .settings(commonSettings)
   .settings(
-    name := "common-core",
+    name := "scala-common-core",
     resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots",
     libraryDependencies ++= Seq(
       "co.fs2" %%% "fs2-io" % V.fs2,
@@ -138,7 +138,7 @@ lazy val app = projectMatrix.in(file("modules/app"))
   .dependsOn(core % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
-    name := "common-app"
+    name := "scala-common-app"
   )
   .jvmPlatform(scalaVersions, Seq(
     libraryDependencies ++= Seq(
@@ -166,7 +166,7 @@ lazy val http = projectMatrix.in(file("modules/http"))
   .dependsOn(core % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
-    name := "common-http",
+    name := "scala-common-http",
     libraryDependencies ++= Seq(
       "org.http4s" %%% "http4s-otel4s-middleware" % V.http4sOtel4s
     ),
@@ -178,7 +178,7 @@ lazy val httpClient = projectMatrix.in(file("modules/http-client"))
   .dependsOn(http % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
-    name := "common-http-client",
+    name := "scala-common-http-client",
     libraryDependencies ++= Seq(
       "org.http4s" %%% "http4s-client" % V.http4s,
     ),
@@ -198,7 +198,7 @@ lazy val httpServer = projectMatrix.in(file("modules/http-server"))
   .dependsOn(http % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
-    name := "common-http-server",
+    name := "scala-common-http-server",
     libraryDependencies ++= Seq(
       "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs" % V.tapir,
       "com.softwaremill.sttp.tapir" %% "tapir-redoc-bundle" % V.tapir,
@@ -213,7 +213,7 @@ lazy val skunk = projectMatrix.in(file("modules/skunk"))
   .dependsOn(core % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
-    name := "common-skunk",
+    name := "scala-common-skunk",
     libraryDependencySchemes += "org.typelevel" %% "otel4s-core-trace" % VersionScheme.Always,
     libraryDependencies ++= Seq(
       "dev.rolang" %% "dumbo" % V.dumbo,
