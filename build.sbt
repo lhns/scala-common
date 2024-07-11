@@ -20,7 +20,8 @@ val V = new {
   val logbackClassic = "1.5.6"
   val munitCatsEffect = "2.0.0"
   val otel4s = "0.8.0"
-  val otelAutoconfigure = "1.38.0"
+  val otelAutoconfigure = "1.40.0"
+  val otel4sExperimental = "0.2.0"
   val otelIncubator = "1.39.0-alpha"
   val otelLogback = "1.32.1-alpha"
   val otelOtlp = "1.39.0"
@@ -110,7 +111,7 @@ lazy val root: Project = project.in(file("."))
   .aggregate(httpServer.projectRefs: _*)
   .aggregate(skunk.projectRefs: _*)
 
-lazy val core = projectMatrix.in(file("mod/core"))
+lazy val core = projectMatrix.in(file("modules/core"))
   .settings(commonSettings)
   .settings(
     name := "common-core",
@@ -118,6 +119,7 @@ lazy val core = projectMatrix.in(file("mod/core"))
     libraryDependencies ++= Seq(
       "co.fs2" %%% "fs2-io" % V.fs2,
       "de.lhns" %%% "cats-effect-cps" % V.catsEffectCps,
+      "org.typelevel" %%% "otel4s-experimental-trace" % V.otel4sExperimental,
       "org.typelevel" %%% "cats-effect" % V.catsEffect,
       "org.typelevel" %%% "cats-tagless-core" % V.catsTagless,
       "org.typelevel" %%% "log4cats-core" % V.log4Cats,
@@ -132,11 +134,11 @@ lazy val core = projectMatrix.in(file("mod/core"))
     )
   ))
 
-lazy val app = projectMatrix.in(file("mod/app"))
+lazy val app = projectMatrix.in(file("modules/app"))
   .dependsOn(core % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
-    name := "common-app",
+    name := "common-app"
   )
   .jvmPlatform(scalaVersions, Seq(
     libraryDependencies ++= Seq(
@@ -149,7 +151,8 @@ lazy val app = projectMatrix.in(file("mod/app"))
       "org.bidib.com.github.markusbernhardt" % "proxy-vole" % V.proxyVole,
       "org.slf4j" % "jul-to-slf4j" % V.julToSlf4j,
       "org.typelevel" %% "log4cats-slf4j" % V.log4Cats,
-      "org.typelevel" %% "otel4s-oteljava" % V.otel4s,
+      "org.typelevel" %% "otel4s-experimental-metrics" % V.otel4sExperimental,
+      "org.typelevel" %% "otel4s-oteljava" % V.otel4s
     )
   ))
   .jsPlatform(scalaVersions, Seq(
@@ -159,7 +162,7 @@ lazy val app = projectMatrix.in(file("mod/app"))
     )
   ))
 
-lazy val http = projectMatrix.in(file("mod/http"))
+lazy val http = projectMatrix.in(file("modules/http"))
   .dependsOn(core % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
@@ -171,7 +174,7 @@ lazy val http = projectMatrix.in(file("mod/http"))
   .jvmPlatform(scalaVersions)
   .jsPlatform(scalaVersions)
 
-lazy val httpClient = projectMatrix.in(file("mod/http-client"))
+lazy val httpClient = projectMatrix.in(file("modules/http-client"))
   .dependsOn(http % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
@@ -191,7 +194,7 @@ lazy val httpClient = projectMatrix.in(file("mod/http-client"))
     )
   ))
 
-lazy val httpServer = projectMatrix.in(file("mod/http-server"))
+lazy val httpServer = projectMatrix.in(file("modules/http-server"))
   .dependsOn(http % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
@@ -206,7 +209,7 @@ lazy val httpServer = projectMatrix.in(file("mod/http-server"))
   )
   .jvmPlatform(scalaVersions)
 
-lazy val skunk = projectMatrix.in(file("mod/skunk"))
+lazy val skunk = projectMatrix.in(file("modules/skunk"))
   .dependsOn(core % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
