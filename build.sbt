@@ -12,7 +12,7 @@ val V = new {
   val dumbo = "0.3.3"
   val fs2 = "3.10.2"
   val http4s = "0.23.27"
-  val http4sDom = "0.2.8"
+  val http4sDom = "0.2.11"
   val http4sJdkHttpClient = "0.9.1"
   val http4sOtel4s = "0.8.0"
   val julToSlf4j = "2.0.13"
@@ -25,11 +25,11 @@ val V = new {
   val otelIncubator = "1.39.0-alpha"
   val otelLogback = "1.32.1-alpha"
   val otelOtlp = "1.40.0"
-  val proxyVole = "1.1.4"
+  val proxyVole = "1.1.5"
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
   val skunk = "1.0.0-M6"
-  val tapir = "1.10.12"
+  val tapir = "1.10.13"
   val trustmanagerUtils = "1.0.0"
 }
 
