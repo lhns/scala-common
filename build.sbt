@@ -25,6 +25,7 @@ val V = new {
   val otelIncubator = "1.39.0-alpha"
   val otelLogback = "1.32.1-alpha"
   val otelOtlp = "1.40.0"
+  val otelRuntime = "2.5.0-alpha"
   val proxyVole = "1.1.5"
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
@@ -149,6 +150,7 @@ lazy val app = projectMatrix.in(file("modules/app"))
       "io.opentelemetry" % "opentelemetry-sdk-extension-autoconfigure" % V.otelAutoconfigure,
       "io.opentelemetry" % "opentelemetry-sdk-extension-incubator" % V.otelIncubator,
       "io.opentelemetry.instrumentation" % "opentelemetry-logback-appender-1.0" % V.otelLogback,
+      "io.opentelemetry.instrumentation" % "opentelemetry-runtime-telemetry-java17" % V.otelRuntime,
       "org.bidib.com.github.markusbernhardt" % "proxy-vole" % V.proxyVole,
       "org.slf4j" % "jul-to-slf4j" % V.julToSlf4j,
       "org.typelevel" %% "log4cats-slf4j" % V.log4Cats,

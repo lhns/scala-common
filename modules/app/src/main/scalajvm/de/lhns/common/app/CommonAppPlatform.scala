@@ -5,6 +5,7 @@ import cats.effect.{ExitCode, IO, Resource, ResourceApp}
 import com.github.markusbernhardt.proxy.ProxySearch
 import de.lhns.trustmanager.TrustManagers.*
 import io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender
+import io.opentelemetry.instrumentation.runtimemetrics.java17.RuntimeMetrics
 import org.slf4j.bridge.SLF4JBridgeHandler
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import org.typelevel.otel4s.experimental.metrics.IOMetrics
@@ -40,6 +41,11 @@ trait CommonAppPlatform extends ResourceApp {
 
     OtelJava.autoConfigured[IO]().flatMap { otelJava =>
       OpenTelemetryAppender.install(otelJava.underlying)
+
+      RuntimeMetrics.builder(otelJava.underlying)
+        .enableAllFeatures()
+        .enableExperimentalJmxTelemetry()
+        .build()
 
       val context = CommonApp.Context[IO](
         args = args,
