@@ -8,7 +8,7 @@ name := (app.projectRefs.head / name).value
 val V = new {
   val catsEffect = "3.5.4"
   val catsEffectCps = "0.5.0-cf857d6-20240517T140910Z-SNAPSHOT"
-  val catsTagless = "0.16.1"
+  val catsTagless = "0.16.2"
   val dumbo = "0.3.3"
   val fs2 = "3.10.2"
   val http4s = "0.23.27"
@@ -30,7 +30,7 @@ val V = new {
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
   val skunk = "1.0.0-M6"
-  val tapir = "1.10.13"
+  val tapir = "1.10.15"
   val trustmanagerUtils = "1.0.0"
 }
 
