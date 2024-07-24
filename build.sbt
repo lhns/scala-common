@@ -29,7 +29,7 @@ val V = new {
   val proxyVole = "1.1.5"
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
-  val skunk = "1.0.0-M6"
+  val skunk = "1.0.0-M7"
   val tapir = "1.10.15"
   val trustmanagerUtils = "1.0.0"
 }
