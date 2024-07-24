@@ -46,8 +46,8 @@ lazy val commonSettings: SettingsDefinition = Def.settings(
   homepage := scmInfo.value.map(_.browseUrl),
   scmInfo := Some(
     ScmInfo(
-      url("https://github.com/lhns/fs2-functork"),
-      "scm:git@github.com:lhns/fs2-functork.git"
+      url("https://github.com/lhns/scala-common"),
+      "scm:git@github.com:lhns/scala-common.git"
     )
   ),
   developers := List(
