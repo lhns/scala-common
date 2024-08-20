@@ -171,7 +171,8 @@ lazy val http = projectMatrix.in(file("modules/http"))
   .settings(
     name := "scala-common-http",
     libraryDependencies ++= Seq(
-      "org.http4s" %%% "http4s-otel4s-middleware" % V.http4sOtel4s
+      "org.http4s" %%% "http4s-otel4s-middleware" % V.http4sOtel4s,
+      "com.softwaremill.sttp.tapir" %%% "tapir-core" % V.tapir,
     ),
   )
   .jvmPlatform(scalaVersions)
@@ -184,6 +185,7 @@ lazy val httpClient = projectMatrix.in(file("modules/http-client"))
     name := "scala-common-http-client",
     libraryDependencies ++= Seq(
       "org.http4s" %%% "http4s-client" % V.http4s,
+      "com.softwaremill.sttp.tapir" %%% "tapir-http4s-client" % V.tapir,
     ),
   )
   .jvmPlatform(scalaVersions, Seq(
@@ -191,11 +193,11 @@ lazy val httpClient = projectMatrix.in(file("modules/http-client"))
       "org.http4s" %% "http4s-jdk-http-client" % V.http4sJdkHttpClient,
     )
   ))
-  .jsPlatform(scalaVersions, Seq(
+  /*.jsPlatform(scalaVersions, Seq(
     libraryDependencies ++= Seq(
       "org.http4s" %%% "http4s-dom" % V.http4sDom
     )
-  ))
+  ))*/
 
 lazy val httpServer = projectMatrix.in(file("modules/http-server"))
   .dependsOn(http % "compile->compile;test->test")

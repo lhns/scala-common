@@ -7,7 +7,7 @@ import cats.syntax.all.*
 import org.http4s.HttpRoutes
 import sttp.apispec.openapi.circe.yaml.*
 import sttp.capabilities.fs2.Fs2Streams
-import sttp.tapir.Endpoint
+import sttp.tapir.AnyEndpoint
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
 import sttp.tapir.redoc.{Redoc, RedocUIOptions}
 import sttp.tapir.server.ServerEndpoint
@@ -15,7 +15,7 @@ import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 case class EndpointRoutes[F[_]](
                                  routes: HttpRoutes[F],
-                                 endpoints: Seq[Endpoint[?, ?, ?, ?, ?]]
+                                 endpoints: Seq[AnyEndpoint]
                                )
 
 object EndpointRoutes {
