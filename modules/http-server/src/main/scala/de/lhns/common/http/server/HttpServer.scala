@@ -24,26 +24,6 @@ import scala.concurrent.duration.*
 import scala.util.chaining.*
 
 trait HttpServer {
-  private def metricsMiddlewareResource[F[_]: Async: Meter](
-                                               socketAddress: SocketAddress[Host],
-                                               attributes: Attributes,
-                                               classifierF: Request[F] => Option[String]
-                                             ): Resource[F, HttpApp[F] => HttpApp[F]] = {
-    val attributes = Attributes(
-      Attribute("server.address", socketAddress.host.toString),
-      Attribute("server.port", socketAddress.port.value.toLong)
-    )
-
-    OtelMetrics.serverMetricsOps[F](
-      attributes = attributes
-    ).map { metricsOps =>
-      val metricsMiddleware: HttpApp[F] => HttpApp[F] = { (app: HttpApp[F]) =>
-        Metrics(metricsOps)(HttpRoutes.strict(request => app(request))).mapF(_.getOrRaise(throw new RuntimeException()))
-      }
-      metricsMiddleware
-    }.toResource
-  }
-
   def resource[
     F[_] : Async : Network : Tracer : Meter
   ](
@@ -77,4 +57,25 @@ trait HttpServer {
           .build
       }
     }.parUnorderedSequence
+
+  private def metricsMiddlewareResource[F[_] : Async : Meter](
+                                                               socketAddress: SocketAddress[Host],
+                                                               attributes: Attributes,
+                                                               classifierF: Request[F] => Option[String]
+                                                             ): Resource[F, HttpApp[F] => HttpApp[F]] =
+    OtelMetrics.serverMetricsOps[F](
+      attributes = Attributes(
+        Attribute("server.address", socketAddress.host.toString),
+        Attribute("server.port", socketAddress.port.value.toLong)
+      ) ++ attributes
+    ).map { metricsOps =>
+      val metricsMiddleware: HttpApp[F] => HttpApp[F] = { (app: HttpApp[F]) =>
+        Metrics(
+          ops = metricsOps,
+          classifierF = classifierF
+        )(HttpRoutes.strict(request => app(request)))
+          .mapF(_.getOrRaise(throw new RuntimeException()))
+      }
+      metricsMiddleware
+    }.toResource
 }

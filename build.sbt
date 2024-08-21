@@ -9,19 +9,19 @@ val V = new {
   val catsEffect = "3.5.4"
   val catsEffectCps = "0.5.0-cf857d6-20240517T140910Z-SNAPSHOT"
   val catsTagless = "0.16.2"
-  val dumbo = "0.3.3"
+  val dumbo = "0.4.0"
   val fs2 = "3.10.2"
   val http4s = "0.23.27"
   val http4sDom = "0.2.11"
   val http4sJdkHttpClient = "0.9.1"
   val http4sOtel4s = "0.8.0"
-  val julToSlf4j = "2.0.13"
+  val julToSlf4j = "2.0.16"
   val log4Cats = "2.7.0"
-  val logbackClassic = "1.5.6"
+  val logbackClassic = "1.5.7"
   val munitCatsEffect = "2.0.0"
-  val otel4s = "0.8.0"
+  val otel4s = "0.8.1"
   val otelAutoconfigure = "1.40.0"
-  val otel4sExperimental = "0.2.0"
+  val otel4sExperimental = "0.3.0"
   val otelIncubator = "1.39.0-alpha"
   val otelLogback = "1.32.1-alpha"
   val otelOtlp = "1.40.0"
@@ -30,7 +30,7 @@ val V = new {
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
   val skunk = "1.0.0-M7"
-  val tapir = "1.10.15"
+  val tapir = "1.11.1"
   val trustmanagerUtils = "1.0.0"
 }
 
@@ -171,7 +171,8 @@ lazy val http = projectMatrix.in(file("modules/http"))
   .settings(
     name := "scala-common-http",
     libraryDependencies ++= Seq(
-      "org.http4s" %%% "http4s-otel4s-middleware" % V.http4sOtel4s
+      "org.http4s" %%% "http4s-otel4s-middleware" % V.http4sOtel4s,
+      "com.softwaremill.sttp.tapir" %%% "tapir-core" % V.tapir,
     ),
   )
   .jvmPlatform(scalaVersions)
@@ -184,6 +185,7 @@ lazy val httpClient = projectMatrix.in(file("modules/http-client"))
     name := "scala-common-http-client",
     libraryDependencies ++= Seq(
       "org.http4s" %%% "http4s-client" % V.http4s,
+      "com.softwaremill.sttp.tapir" %%% "tapir-http4s-client" % V.tapir,
     ),
   )
   .jvmPlatform(scalaVersions, Seq(
@@ -191,11 +193,11 @@ lazy val httpClient = projectMatrix.in(file("modules/http-client"))
       "org.http4s" %% "http4s-jdk-http-client" % V.http4sJdkHttpClient,
     )
   ))
-  .jsPlatform(scalaVersions, Seq(
+  /*.jsPlatform(scalaVersions, Seq(
     libraryDependencies ++= Seq(
       "org.http4s" %%% "http4s-dom" % V.http4sDom
     )
-  ))
+  ))*/
 
 lazy val httpServer = projectMatrix.in(file("modules/http-server"))
   .dependsOn(http % "compile->compile;test->test")
