@@ -9,7 +9,7 @@ val V = new {
   val catsEffect = "3.5.4"
   val catsEffectCps = "0.5.0-cf857d6-20240517T140910Z-SNAPSHOT"
   val catsTagless = "0.16.2"
-  val dumbo = "0.3.3"
+  val dumbo = "0.4.0"
   val fs2 = "3.10.2"
   val http4s = "0.23.27"
   val http4sDom = "0.2.11"
@@ -29,7 +29,7 @@ val V = new {
   val proxyVole = "1.1.5"
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
-  val skunk = "1.0.0-M6"
+  val skunk = "1.0.0-M7"
   val tapir = "1.11.1"
   val trustmanagerUtils = "1.0.0"
 }
