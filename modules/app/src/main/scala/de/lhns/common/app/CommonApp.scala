@@ -11,7 +11,7 @@ import org.typelevel.otel4s.metrics.{Meter, MeterProvider}
 import org.typelevel.otel4s.trace.{Tracer, TracerProvider}
 
 abstract class CommonApp extends ResourceApp with CommonAppPlatform {
-  protected[app] def scopeName: String = getClass.getPackageName
+  protected[app] def scopeName: String = getClass.getName
 
   protected[app] def allowInsecure: Boolean = false
 
