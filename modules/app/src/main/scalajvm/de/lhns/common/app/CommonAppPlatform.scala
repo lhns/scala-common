@@ -34,7 +34,11 @@ trait CommonAppPlatform extends ResourceApp {
           .setProperty("jdk.internal.httpclient.disableHostnameVerification", disableHostnameVerification.toString)
       }
 
-    setDefaultTrustManager(jreTrustManagerWithEnvVar)
+    setDefaultTrustManager(
+      insecureTrustManagerFromEnvVar
+        .filter(_ => allowInsecure)
+        .getOrElse(jreTrustManagerWithEnvVar)
+    )
 
     SLF4JBridgeHandler.removeHandlersForRootLogger()
     SLF4JBridgeHandler.install()
@@ -50,9 +54,9 @@ trait CommonAppPlatform extends ResourceApp {
       val context = CommonApp.Context[IO](
         args = args,
         env = Env[IO],
+        otel = otelJava,
         loggerFactory = Slf4jFactory.create[IO],
-        tracerProvider = otelJava.tracerProvider,
-        meterProvider = otelJava.meterProvider
+        scopeName = scopeName
       )
 
       otelJava.meterProvider.get(getClass.getName).toResource.flatMap { meter =>

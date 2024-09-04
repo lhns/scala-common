@@ -2,28 +2,22 @@ package de.lhns.common.http.server
 
 import cats.effect.*
 import cats.effect.cps.*
-import cats.effect.std.Env
 import cats.effect.syntax.all.*
 import cats.syntax.all.*
 import com.comcast.ip4s.*
-import fs2.compression.Compression
 import fs2.io.net.Network
 import org.http4s.ember.server.EmberServerBuilder
-import org.http4s.implicits.*
-import org.http4s.metrics.MetricsOps
 import org.http4s.otel4s.middleware.{OtelMetrics, ServerMiddleware as Otel4sServerMiddleware}
 import org.http4s.server.Server
-import org.http4s.server.middleware.{CORS, ErrorHandling, GZip, Metrics}
+import org.http4s.server.middleware.{ErrorHandling, Metrics}
 import org.http4s.{HttpApp, HttpRoutes, Request}
-import org.typelevel.log4cats.{LoggerFactory, StructuredLogger}
+import org.typelevel.otel4s.metrics.Meter
+import org.typelevel.otel4s.trace.Tracer
 import org.typelevel.otel4s.{Attribute, Attributes}
-import org.typelevel.otel4s.metrics.{Meter, MeterProvider}
-import org.typelevel.otel4s.trace.{Tracer, TracerProvider}
 
 import scala.concurrent.duration.*
-import scala.util.chaining.*
 
-trait HttpServer {
+object HttpServer {
   def resource[
     F[_] : Async : Network : Tracer : Meter
   ](

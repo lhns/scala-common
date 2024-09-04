@@ -13,9 +13,9 @@ trait CommonAppPlatform extends ResourceApp {
     val context = CommonApp.Context[IO](
       args = args,
       env = Env[IO],
+      otel = CommonApp.Context.otelNoop,
       loggerFactory = ConsoleLoggerFactory.create[IO],
-      tracerProvider = TracerProvider.noop[IO],
-      meterProvider = MeterProvider.noop[IO]
+      scopeName = scopeName
     )
 
     run(context)
