@@ -18,6 +18,7 @@ trait CommonAppPlatform extends ResourceApp {
         loggerFactory = ConsoleLoggerFactory.create[IO],
         scopeName = scopeName
       )
+      exitCode <- run(context)
     } yield
-      run(context)
+      exitCode
 }
