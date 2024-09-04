@@ -12,7 +12,7 @@
 
 ```sbt
 resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots",
-libraryDependencies += "de.lhns" %% "scala-common" % "0.1.0"
+libraryDependencies += "de.lhns" %% "scala-common-core" % "0.2.0"
 ```
 
 ## License
