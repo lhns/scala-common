@@ -11,7 +11,7 @@ import org.typelevel.otel4s.metrics.{Meter, MeterProvider}
 import org.typelevel.otel4s.trace.{Tracer, TracerProvider}
 
 abstract class CommonApp extends ResourceApp with CommonAppPlatform {
-  protected[app] def scopeName: String = getClass.getName
+  protected[app] def scopeName: String = getClass.getPackageName
 
   protected[app] def allowInsecure: Boolean = false
 
@@ -44,13 +44,13 @@ object CommonApp {
       override def tracerProvider: TracerProvider[F] = TracerProvider.noop[F]
     }
 
-    def apply[F[_]](
-                     args: List[String],
-                     env: Env[F],
-                     otel: Otel4s[F],
-                     loggerFactory: LoggerFactory[F],
-                     scopeName: String
-                   ): Resource[F, Context[F]] = {
+    def resource[F[_]](
+                        args: List[String],
+                        env: Env[F],
+                        otel: Otel4s[F],
+                        loggerFactory: LoggerFactory[F],
+                        scopeName: String
+                      ): Resource[F, Context[F]] = {
       val _args = args
       val _env = env
       val _otel = otel

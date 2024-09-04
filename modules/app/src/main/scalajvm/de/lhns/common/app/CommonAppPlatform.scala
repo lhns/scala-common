@@ -51,21 +51,21 @@ trait CommonAppPlatform extends ResourceApp {
         .enableExperimentalJmxTelemetry()
         .build()
 
-      val context = CommonApp.Context[IO](
-        args = args,
-        env = Env[IO],
-        otel = otelJava,
-        loggerFactory = Slf4jFactory.create[IO],
-        scopeName = scopeName
-      )
-
-      otelJava.meterProvider.get(getClass.getName).toResource.flatMap { meter =>
-        given Meter[IO] = meter
-
-        IOMetrics.register[IO]().flatMap { _ =>
-          run(context)
+      for {
+        context <- CommonApp.Context.resource[IO](
+          args = args,
+          env = Env[IO],
+          otel = otelJava,
+          loggerFactory = Slf4jFactory.create[IO],
+          scopeName = scopeName
+        )
+        _ <- {
+          import context.given
+          IOMetrics.register[IO]()
         }
-      }
+        exitCode <- run(context)
+      } yield
+        exitCode
     }
   }
 }

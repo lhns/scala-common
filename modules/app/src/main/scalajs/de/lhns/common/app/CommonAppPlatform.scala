@@ -9,15 +9,15 @@ import org.typelevel.otel4s.trace.TracerProvider
 trait CommonAppPlatform extends ResourceApp {
   self: CommonApp =>
 
-  override def run(args: List[String]): Resource[IO, ExitCode] = {
-    val context = CommonApp.Context[IO](
-      args = args,
-      env = Env[IO],
-      otel = CommonApp.Context.otelNoop,
-      loggerFactory = ConsoleLoggerFactory.create[IO],
-      scopeName = scopeName
-    )
-
-    run(context)
-  }
+  override def run(args: List[String]): Resource[IO, ExitCode] =
+    for {
+      context <- CommonApp.Context.resource[IO](
+        args = args,
+        env = Env[IO],
+        otel = CommonApp.Context.otelNoop,
+        loggerFactory = ConsoleLoggerFactory.create[IO],
+        scopeName = scopeName
+      )
+    } yield
+      run(context)
 }
