@@ -50,9 +50,9 @@ object SkunkSessionPool {
       case Some(dumbo) =>
         Tracer[F].span(
           "running database migration",
-          Attribute("db.system", "postgresql"),
           Attribute("server.address", host),
           Attribute("server.port", port.toLong),
+          Attribute("db.system", "postgresql"),
           Attribute("db.namespace", database)
         ).surround {
           dumbo(connectionConfig).runMigration.void
