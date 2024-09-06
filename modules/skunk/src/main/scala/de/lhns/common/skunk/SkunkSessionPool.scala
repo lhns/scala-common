@@ -7,6 +7,7 @@ import cats.effect.{Async, Resource}
 import cats.syntax.all.*
 import dumbo.{ConnectionConfig, DumboWithResourcesPartiallyApplied}
 import fs2.io.net.Network
+import org.typelevel.otel4s.Attribute
 import org.typelevel.otel4s.trace.Tracer
 import skunk.util.{BrokenPipePool, Typer}
 import skunk.{RedactionStrategy, SSL, Session}
@@ -47,7 +48,15 @@ object SkunkSessionPool {
 
     migrations match {
       case Some(dumbo) =>
-        dumbo(connectionConfig).runMigration.void.toResource.await
+        Tracer[F].span(
+          "running database migration",
+          Attribute("db.system", "postgresql"),
+          Attribute("server.address", host),
+          Attribute("server.port", port.toLong),
+          Attribute("db.namespace", database)
+        ).surround {
+          dumbo(connectionConfig).runMigration.void
+        }.toResource.await
 
       case None =>
     }
