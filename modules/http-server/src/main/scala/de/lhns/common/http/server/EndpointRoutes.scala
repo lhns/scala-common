@@ -5,13 +5,14 @@ import cats.effect.Async
 import cats.kernel.Monoid
 import cats.syntax.all.*
 import org.http4s.HttpRoutes
+import sttp.apispec.openapi.OpenAPI
 import sttp.apispec.openapi.circe.yaml.*
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.tapir.AnyEndpoint
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
-import sttp.tapir.redoc.{Redoc, RedocUIOptions}
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.http4s.Http4sServerInterpreter
+import sttp.tapir.swagger.{SwaggerUI, SwaggerUIOptions}
 
 case class EndpointRoutes[F[_]](
                                  routes: HttpRoutes[F],
@@ -25,34 +26,31 @@ object EndpointRoutes {
   )
 
   extension [F[_] : Async](endpointRoutes: EndpointRoutes[F]) {
-    def toOpenApiEndpoints(
-                            name: String,
-                            version: String,
-                            options: RedocUIOptions = RedocUIOptions.default
-                          ): EndpointRoutes[F] = {
-      val openApi = OpenAPIDocsInterpreter().toOpenAPI(
+    def toOpenApi(
+                   name: String,
+                   version: String
+                 ): OpenAPI =
+      OpenAPIDocsInterpreter().toOpenAPI(
         endpointRoutes.endpoints,
         name,
         version
-      )
-
-      EndpointRoutes(Redoc[F](
-        openApi.info.title,
-        openApi.toYaml,
-        options
-      ) *)
-    }
+      ).openapi("3.0.3")
 
     def withOpenApiEndpoints(
                               name: String,
-                              version: String,
-                              options: RedocUIOptions = RedocUIOptions.default
-                            ): EndpointRoutes[F] =
-      endpointRoutes |+| toOpenApiEndpoints(
+                              version: String
+                            )(openApi: OpenAPI => EndpointRoutes[F]): EndpointRoutes[F] =
+      endpointRoutes |+| openApi(toOpenApi(
         name = name,
-        version = version,
-        options = options
-      )
+        version = version
+      ))
+  }
+
+  object swaggerUi {
+    extension (openApi: OpenAPI) {
+      def swaggerUi[F[_] : Async](options: SwaggerUIOptions = SwaggerUIOptions.default): EndpointRoutes[F] =
+        EndpointRoutes(SwaggerUI[F](openApi.toYaml, options) *)
+    }
   }
 
   def apply[F[_] : Async](serverEndpoints: ServerEndpoint[Fs2Streams[F], F]*): EndpointRoutes[F] =

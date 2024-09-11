@@ -205,10 +205,10 @@ lazy val httpServer = projectMatrix.in(file("modules/http-server"))
   .settings(
     name := "scala-common-http-server",
     libraryDependencies ++= Seq(
-      "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs" % V.tapir,
-      "com.softwaremill.sttp.tapir" %% "tapir-redoc-bundle" % V.tapir,
       "com.softwaremill.sttp.tapir" %% "tapir-cats" % V.tapir,
       "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % V.tapir,
+      "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs" % V.tapir,
+      "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % V.tapir,
       "org.http4s" %% "http4s-ember-server" % V.http4s,
     ),
   )
