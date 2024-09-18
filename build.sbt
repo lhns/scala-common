@@ -31,7 +31,7 @@ val V = new {
   val scalajsJavaSecurerandom = "1.0.0"
   val skunk = "1.0.0-M7"
   val tapir = "1.11.2"
-  val trustmanagerUtils = "1.0.0"
+  val trustmanagerUtils = "1.1.0"
 }
 
 lazy val commonSettings: SettingsDefinition = Def.settings(
