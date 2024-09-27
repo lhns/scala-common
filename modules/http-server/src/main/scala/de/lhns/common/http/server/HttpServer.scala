@@ -1,7 +1,6 @@
 package de.lhns.common.http.server
 
 import cats.effect.*
-import cats.effect.cps.*
 import cats.effect.syntax.all.*
 import cats.syntax.all.*
 import com.comcast.ip4s.*
