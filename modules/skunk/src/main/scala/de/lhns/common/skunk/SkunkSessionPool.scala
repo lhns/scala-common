@@ -1,10 +1,11 @@
 package de.lhns.common.skunk
 
-import cats.effect.cps.*
 import cats.effect.std.Console
 import cats.effect.syntax.all.*
 import cats.effect.{Async, Resource}
 import cats.syntax.all.*
+import cps.*
+import cps.monads.catsEffect.given
 import dumbo.{ConnectionConfig, DumboWithResourcesPartiallyApplied}
 import fs2.io.net.Network
 import org.typelevel.otel4s.Attribute

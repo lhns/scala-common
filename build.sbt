@@ -1,4 +1,4 @@
-lazy val scalaVersions = Seq("3.4.3")
+lazy val scalaVersions = Seq("3.5.1")
 
 ThisBuild / scalaVersion := scalaVersions.head
 ThisBuild / versionScheme := Some("early-semver")
@@ -7,8 +7,8 @@ name := (app.projectRefs.head / name).value
 
 val V = new {
   val catsEffect = "3.5.4"
-  val catsEffectCps = "0.5.0-cf857d6-20240517T140910Z-SNAPSHOT"
   val catsTagless = "0.16.2"
+  val dottyCpsAsync = "0.9.22"
   val dumbo = "0.4.0"
   val fs2 = "3.11.0"
   val http4s = "0.23.28"
@@ -30,6 +30,7 @@ val V = new {
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
   val skunk = "1.0.0-M7"
+  val sttpShared = "1.3.22"
   val tapir = "1.11.5"
   val trustmanagerUtils = "1.1.0"
 }
@@ -74,7 +75,7 @@ lazy val commonSettings: SettingsDefinition = Def.settings(
     "-Xfatal-warnings", // Fail the compilation if there are any warnings.
     "-Wshadow:private-shadow", // A private field (or class parameter) shadows a superclass field.
     "-Wshadow:type-parameter-shadow", // A local type parameter shadows a type already in scope.
-    "-Ykind-projector:underscores",
+    "-Xkind-projector:underscores",
     "-Wnonunit-statement",
     "-experimental"
   ),
@@ -117,10 +118,9 @@ lazy val core = projectMatrix.in(file("modules/core"))
   .settings(commonSettings)
   .settings(
     name := "scala-common-core",
-    resolvers += "Sonatype OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots",
     libraryDependencies ++= Seq(
       "co.fs2" %%% "fs2-io" % V.fs2,
-      "de.lhns" %%% "cats-effect-cps" % V.catsEffectCps,
+      "com.github.rssh" %%% "cps-async-connect-cats-effect" % V.dottyCpsAsync,
       "org.typelevel" %%% "otel4s-experimental-trace" % V.otel4sExperimental,
       "org.typelevel" %%% "cats-effect" % V.catsEffect,
       "org.typelevel" %%% "cats-tagless-core" % V.catsTagless,
@@ -173,6 +173,7 @@ lazy val http = projectMatrix.in(file("modules/http"))
     libraryDependencies ++= Seq(
       "org.http4s" %%% "http4s-otel4s-middleware" % V.http4sOtel4s,
       "com.softwaremill.sttp.tapir" %%% "tapir-core" % V.tapir,
+      "com.softwaremill.sttp.shared" %%% "fs2" % V.sttpShared,
     ),
   )
   .jvmPlatform(scalaVersions)
