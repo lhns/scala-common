@@ -30,7 +30,7 @@ val V = new {
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
   val skunk = "1.0.0-M7"
-  val sttpShared = "1.3.22"
+  val sttpShared = "1.4.2"
   val tapir = "1.11.5"
   val trustmanagerUtils = "1.1.0"
 }
