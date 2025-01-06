@@ -73,6 +73,7 @@ lazy val commonSettings: SettingsDefinition = Def.settings(
     "-language:implicitConversions", // Allow definition of implicit functions called views
     "-unchecked", // Enable additional warnings where generated code depends on assumptions.
     "-Xfatal-warnings", // Fail the compilation if there are any warnings.
+    "-Wconf:name=Given search preference for:is",
     "-Wshadow:private-shadow", // A private field (or class parameter) shadows a superclass field.
     "-Wshadow:type-parameter-shadow", // A local type parameter shadows a type already in scope.
     "-Xkind-projector:underscores",
