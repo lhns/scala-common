@@ -8,5 +8,5 @@ import org.http4s.client.Client
 
 object HttpClientPlatform {
   private[client] def resource[F[_]: Async : Network]: Resource[F, Client[F]] =
-    JdkHttpClient.simple[F].toResource
+    JdkHttpClient.simple[F]
 }

@@ -1,4 +1,4 @@
-lazy val scalaVersions = Seq("3.5.1")
+lazy val scalaVersions = Seq("3.6.2")
 
 ThisBuild / scalaVersion := scalaVersions.head
 ThisBuild / versionScheme := Some("early-semver")
@@ -6,32 +6,32 @@ ThisBuild / organization := "de.lhns"
 name := (app.projectRefs.head / name).value
 
 val V = new {
-  val catsEffect = "3.5.4"
+  val catsEffect = "3.5.7"
   val catsTagless = "0.16.2"
-  val dottyCpsAsync = "0.9.22"
+  val dottyCpsAsync = "0.9.23"
   val dumbo = "0.4.0"
   val fs2 = "3.11.0"
-  val http4s = "0.23.28"
+  val http4s = "0.23.30"
   val http4sDom = "0.2.11"
-  val http4sJdkHttpClient = "0.9.1"
+  val http4sJdkHttpClient = "0.10.0"
   val http4sOtel4s = "0.8.0"
   val julToSlf4j = "2.0.16"
   val log4Cats = "2.7.0"
-  val logbackClassic = "1.5.8"
+  val logbackClassic = "1.5.16"
   val munitCatsEffect = "2.0.0"
   val otel4s = "0.8.1"
-  val otelAutoconfigure = "1.42.1"
+  val otelAutoconfigure = "1.45.0"
   val otel4sExperimental = "0.3.0"
   val otelIncubator = "1.39.0-alpha"
   val otelLogback = "1.32.1-alpha"
-  val otelOtlp = "1.42.1"
+  val otelOtlp = "1.45.0"
   val otelRuntime = "2.5.0-alpha"
-  val proxyVole = "1.1.5"
+  val proxyVole = "1.1.6"
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
   val skunk = "1.0.0-M8"
-  val sttpShared = "1.3.22"
-  val tapir = "1.11.5"
+  val sttpShared = "1.4.2"
+  val tapir = "1.11.11"
   val trustmanagerUtils = "1.1.0"
 }
 
@@ -72,11 +72,12 @@ lazy val commonSettings: SettingsDefinition = Def.settings(
     "-language:higherKinds", // Allow higher-kinded types
     "-language:implicitConversions", // Allow definition of implicit functions called views
     "-unchecked", // Enable additional warnings where generated code depends on assumptions.
-    "-Xfatal-warnings", // Fail the compilation if there are any warnings.
+    "-Werror", // Fail the compilation if there are any warnings.
+    "-Wconf:msg=Given search preference for:i",
     "-Wshadow:private-shadow", // A private field (or class parameter) shadows a superclass field.
     "-Wshadow:type-parameter-shadow", // A local type parameter shadows a type already in scope.
-    "-Xkind-projector:underscores",
     "-Wnonunit-statement",
+    "-Xkind-projector:underscores",
     "-experimental"
   ),
 
