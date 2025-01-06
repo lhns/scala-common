@@ -11,7 +11,7 @@ import org.typelevel.otel4s.trace.Tracer
 def traced[Alg[_[_]], F[_] : Tracer](alg: Alg[F])(implicit aspect: Aspect.Domain[Alg, Show]): Alg[F] =
   alg
     .weaveDomain[Show]
-    .mapK(new FunctionK[Aspect.Weave.Domain[F, Show, *], F] {
+    .mapK(new FunctionK[Aspect.Weave.Domain[F, Show, _], F] {
       override def apply[A](fa: Aspect.Weave.Domain[F, Show, A]): F[A] =
         Tracer[F].span(
           fa.codomain.name,

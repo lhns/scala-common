@@ -1,4 +1,4 @@
-lazy val scalaVersions = Seq("3.5.2")
+lazy val scalaVersions = Seq("3.6.2")
 
 ThisBuild / scalaVersion := scalaVersions.head
 ThisBuild / versionScheme := Some("early-semver")
@@ -72,11 +72,12 @@ lazy val commonSettings: SettingsDefinition = Def.settings(
     "-language:higherKinds", // Allow higher-kinded types
     "-language:implicitConversions", // Allow definition of implicit functions called views
     "-unchecked", // Enable additional warnings where generated code depends on assumptions.
-    "-Xfatal-warnings", // Fail the compilation if there are any warnings.
+    "-Werror", // Fail the compilation if there are any warnings.
+    "-Wconf:msg=Given search preference for:i",
     "-Wshadow:private-shadow", // A private field (or class parameter) shadows a superclass field.
     "-Wshadow:type-parameter-shadow", // A local type parameter shadows a type already in scope.
-    "-Xkind-projector:underscores",
     "-Wnonunit-statement",
+    "-Xkind-projector:underscores",
     "-experimental"
   ),
 
