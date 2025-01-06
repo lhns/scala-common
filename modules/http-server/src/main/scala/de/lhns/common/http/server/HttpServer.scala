@@ -6,7 +6,8 @@ import cats.syntax.all.*
 import com.comcast.ip4s.*
 import fs2.io.net.Network
 import org.http4s.ember.server.EmberServerBuilder
-import org.http4s.otel4s.middleware.{OtelMetrics, ServerMiddleware as Otel4sServerMiddleware}
+import org.http4s.otel4s.middleware.metrics.OtelMetrics
+import org.http4s.otel4s.middleware.trace.server.ServerMiddleware as Otel4sServerMiddleware
 import org.http4s.server.Server
 import org.http4s.server.middleware.{ErrorHandling, Metrics}
 import org.http4s.{HttpApp, HttpRoutes, Request}
@@ -18,7 +19,7 @@ import scala.concurrent.duration.*
 
 object HttpServer {
   def resource[
-    F[_] : Async : Network : Tracer : Meter
+    F[_] : {Async, Network, Tracer, Meter}
   ](
      attributes: Attributes = Attributes.empty,
      classifierF: Request[F] => Option[String] = { (_: Request[F]) =>
@@ -51,11 +52,11 @@ object HttpServer {
       }
     }.parUnorderedSequence
 
-  private def metricsMiddlewareResource[F[_] : Async : Meter](
-                                                               socketAddress: SocketAddress[Host],
-                                                               attributes: Attributes,
-                                                               classifierF: Request[F] => Option[String]
-                                                             ): Resource[F, HttpApp[F] => HttpApp[F]] =
+  private def metricsMiddlewareResource[F[_] : {Async, Meter}](
+                                                                socketAddress: SocketAddress[Host],
+                                                                attributes: Attributes,
+                                                                classifierF: Request[F] => Option[String]
+                                                              ): Resource[F, HttpApp[F] => HttpApp[F]] =
     OtelMetrics.serverMetricsOps[F](
       attributes = Attributes(
         Attribute("server.address", socketAddress.host.toString),

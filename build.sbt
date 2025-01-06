@@ -14,7 +14,7 @@ val V = new {
   val http4s = "0.23.30"
   val http4sDom = "0.2.11"
   val http4sJdkHttpClient = "0.10.0"
-  val http4sOtel4s = "0.8.0"
+  val http4sOtel4s = "0.10.0"
   val julToSlf4j = "2.0.16"
   val log4Cats = "2.7.0"
   val logbackClassic = "1.5.16"
@@ -172,7 +172,8 @@ lazy val http = projectMatrix.in(file("modules/http"))
   .settings(
     name := "scala-common-http",
     libraryDependencies ++= Seq(
-      "org.http4s" %%% "http4s-otel4s-middleware" % V.http4sOtel4s,
+      "org.http4s" %%% "http4s-otel4s-middleware-metrics" % V.http4sOtel4s,
+      "org.http4s" %%% "http4s-otel4s-middleware-trace-core" % V.http4sOtel4s,
       "com.softwaremill.sttp.tapir" %%% "tapir-core" % V.tapir,
       "com.softwaremill.sttp.shared" %%% "fs2" % V.sttpShared,
     ),
@@ -187,6 +188,7 @@ lazy val httpClient = projectMatrix.in(file("modules/http-client"))
     name := "scala-common-http-client",
     libraryDependencies ++= Seq(
       "org.http4s" %%% "http4s-client" % V.http4s,
+      "org.http4s" %%% "http4s-otel4s-middleware-trace-client" % V.http4sOtel4s,
       "com.softwaremill.sttp.tapir" %%% "tapir-http4s-client" % V.tapir,
     ),
   )
@@ -195,11 +197,11 @@ lazy val httpClient = projectMatrix.in(file("modules/http-client"))
       "org.http4s" %% "http4s-jdk-http-client" % V.http4sJdkHttpClient,
     )
   ))
-  /*.jsPlatform(scalaVersions, Seq(
-    libraryDependencies ++= Seq(
-      "org.http4s" %%% "http4s-dom" % V.http4sDom
-    )
-  ))*/
+/*.jsPlatform(scalaVersions, Seq(
+  libraryDependencies ++= Seq(
+    "org.http4s" %%% "http4s-dom" % V.http4sDom
+  )
+))*/
 
 lazy val httpServer = projectMatrix.in(file("modules/http-server"))
   .dependsOn(http % "compile->compile;test->test")
@@ -212,6 +214,7 @@ lazy val httpServer = projectMatrix.in(file("modules/http-server"))
       "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs" % V.tapir,
       "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % V.tapir,
       "org.http4s" %% "http4s-ember-server" % V.http4s,
+      "org.http4s" %%% "http4s-otel4s-middleware-trace-server" % V.http4sOtel4s,
     ),
   )
   .jvmPlatform(scalaVersions)

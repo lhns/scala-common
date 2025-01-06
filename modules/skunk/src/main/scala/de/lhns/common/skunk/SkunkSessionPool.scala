@@ -19,7 +19,7 @@ object SkunkSessionPool {
   val defaultMigrations = "db/migration"
 
   def apply[
-    F[_] : Async : Tracer : Network : Console
+    F[_] : {Async, Tracer, Network, Console}
   ](
      migrations: Option[DumboWithResourcesPartiallyApplied[F]],
      host: String,
@@ -44,7 +44,11 @@ object SkunkSessionPool {
       user = user,
       database = database,
       password = password,
-      ssl = ssl
+      ssl = ssl match {
+        case SSL.None => ConnectionConfig.SSL.None
+        case SSL.Trusted => ConnectionConfig.SSL.Trusted
+        case SSL.System => ConnectionConfig.SSL.System
+      }
     )
 
     migrations match {
