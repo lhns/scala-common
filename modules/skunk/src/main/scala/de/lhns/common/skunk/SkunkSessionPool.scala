@@ -19,7 +19,7 @@ object SkunkSessionPool {
   val defaultMigrations = "db/migration"
 
   def apply[
-    F[_] : {Async, Tracer, Network, Console}
+    F[_] : Async : Tracer : Network : Console
   ](
      migrations: Option[DumboWithResourcesPartiallyApplied[F]],
      host: String,

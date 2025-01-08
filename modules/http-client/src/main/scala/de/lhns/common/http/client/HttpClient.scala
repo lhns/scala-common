@@ -14,7 +14,7 @@ import org.typelevel.otel4s.trace.Tracer
 
 object HttpClient {
   def resource[
-    F[_] : {Async, Network, Tracer, Meter}
+    F[_] : Async : Network : Tracer : Meter
   ](
      attributes: Attributes = Attributes.empty,
      classifierF: Request[F] => Option[String] = { (_: Request[F]) =>

@@ -1,4 +1,4 @@
-lazy val scalaVersions = Seq("3.6.2")
+lazy val scalaVersions = Seq("3.3.4")
 
 ThisBuild / scalaVersion := scalaVersions.head
 ThisBuild / versionScheme := Some("early-semver")
@@ -22,14 +22,14 @@ val V = new {
   val otel4s = "0.11.2"
   val otelAutoconfigure = "1.45.0"
   val otel4sExperimental = "0.5.0"
-  val otelIncubator = "1.39.0-alpha"
-  val otelLogback = "1.32.1-alpha"
+  val otelIncubator = "1.45.0-alpha"
+  val otelLogback = "2.11.0-alpha"
   val otelOtlp = "1.45.0"
-  val otelRuntime = "2.5.0-alpha"
+  val otelRuntime = "2.11.0-alpha"
   val proxyVole = "1.1.6"
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
-  val skunk = "1.0.0-M8"
+  val skunk = "1.1.0-M3"
   val sttpShared = "1.4.2"
   val tapir = "1.11.11"
   val trustmanagerUtils = "1.1.0"
@@ -74,11 +74,10 @@ lazy val commonSettings: SettingsDefinition = Def.settings(
     "-unchecked", // Enable additional warnings where generated code depends on assumptions.
     "-Werror", // Fail the compilation if there are any warnings.
     "-Wconf:msg=Given search preference for:i",
-    "-Wshadow:private-shadow", // A private field (or class parameter) shadows a superclass field.
-    "-Wshadow:type-parameter-shadow", // A local type parameter shadows a type already in scope.
+    //"-Wshadow:private-shadow", // A private field (or class parameter) shadows a superclass field.
+    //"-Wshadow:type-parameter-shadow", // A local type parameter shadows a type already in scope.
     "-Wnonunit-statement",
-    "-Xkind-projector:underscores",
-    "-experimental"
+    "-Ykind-projector:underscores"
   ),
 
   Test / scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule)),
