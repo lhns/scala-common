@@ -7,7 +7,7 @@ name := (app.projectRefs.head / name).value
 
 val V = new {
   val catsEffect = "3.5.7"
-  val catsTagless = "0.16.2"
+  val catsTagless = "0.16.3"
   val dottyCpsAsync = "0.9.23"
   val dumbo = "0.5.3"
   val fs2 = "3.11.0"
