@@ -31,7 +31,7 @@ val V = new {
   val scalajsJavaSecurerandom = "1.0.0"
   val skunk = "1.0.0-M10"
   val sttpShared = "1.4.2"
-  val tapir = "1.11.14"
+  val tapir = "1.11.15"
   val trustmanagerUtils = "1.1.0"
 }
 
