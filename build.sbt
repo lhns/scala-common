@@ -33,6 +33,7 @@ val V = new {
   val sttpShared = "1.4.2"
   val tapir = "1.11.14"
   val trustmanagerUtils = "1.1.0"
+  val fs2BlobStoreS3 = "0.9.15"
 }
 
 lazy val commonSettings: SettingsDefinition = Def.settings(
@@ -107,12 +108,13 @@ lazy val root: Project = project.in(file("."))
     publishArtifact := false,
     publish / skip := true
   )
-  .aggregate(core.projectRefs: _*)
-  .aggregate(app.projectRefs: _*)
-  .aggregate(http.projectRefs: _*)
-  .aggregate(httpClient.projectRefs: _*)
-  .aggregate(httpServer.projectRefs: _*)
-  .aggregate(skunk.projectRefs: _*)
+  .aggregate(core.projectRefs*)
+  .aggregate(app.projectRefs*)
+  .aggregate(http.projectRefs*)
+  .aggregate(httpClient.projectRefs*)
+  .aggregate(httpServer.projectRefs*)
+  .aggregate(skunk.projectRefs*)
+  .aggregate(s3.projectRefs*)
 
 lazy val core = projectMatrix.in(file("modules/core"))
   .settings(commonSettings)
@@ -227,6 +229,17 @@ lazy val skunk = projectMatrix.in(file("modules/skunk"))
     libraryDependencies ++= Seq(
       "dev.rolang" %% "dumbo" % V.dumbo,
       "org.tpolecat" %% "skunk-core" % V.skunk,
+    ),
+  )
+  .jvmPlatform(scalaVersions)
+
+lazy val s3 = projectMatrix.in(file("modules/s3"))
+  .dependsOn(core % "compile->compile;test->test")
+  .settings(commonSettings)
+  .settings(
+    name := "scala-common-s3",
+    libraryDependencies ++= Seq(
+      "com.github.fs2-blobstore" %% "s3" % V.fs2BlobStoreS3
     ),
   )
   .jvmPlatform(scalaVersions)
