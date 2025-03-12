@@ -16,6 +16,7 @@ import org.typelevel.otel4s.trace.Tracer
 import org.typelevel.otel4s.{Attribute, Attributes}
 
 import scala.concurrent.duration.*
+import scala.util.chaining.*
 
 object HttpServer {
   def resource[
@@ -24,7 +25,8 @@ object HttpServer {
      attributes: Attributes = Attributes.empty,
      classifierF: Request[F] => Option[String] = { (_: Request[F]) =>
        None
-     }
+     },
+     idleTimeout: Duration | Null = null
    )(
      endpoints: (SocketAddress[Host], HttpApp[F])*
    ): Resource[F, Seq[Server]] =
@@ -48,6 +50,12 @@ object HttpServer {
             )
           )
           .withShutdownTimeout(1.second)
+          .pipe(builder =>
+            idleTimeout match {
+              case null => builder
+              case timeout => builder.withIdleTimeout(timeout)
+            }
+          )
           .build
       }
     }.parUnorderedSequence
