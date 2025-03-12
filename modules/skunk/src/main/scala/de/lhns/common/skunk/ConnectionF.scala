@@ -35,6 +35,9 @@ object ConnectionF {
         f(session)
       }
     }
+
+  def liftF[F[_], A](f: F[A]): ConnectionF[F, A] =
+    Kleisli.liftF(f)
 }
 
 extension [F[_]](session: Session[F]) {
