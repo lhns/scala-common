@@ -5,10 +5,9 @@ import cats.effect.{ExitCode, IO, Resource, ResourceApp}
 import com.github.markusbernhardt.proxy.ProxySearch
 import de.lhns.trustmanager.TrustManagers.*
 import io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender
-import io.opentelemetry.instrumentation.runtimemetrics.java17.RuntimeMetrics
 import org.slf4j.bridge.SLF4JBridgeHandler
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-import org.typelevel.otel4s.experimental.metrics.IOMetrics
+import org.typelevel.otel4s.experimental.metrics.RuntimeMetrics
 import org.typelevel.otel4s.metrics.Meter
 import org.typelevel.otel4s.oteljava.OtelJava
 
@@ -46,10 +45,10 @@ trait CommonAppPlatform extends ResourceApp {
     OtelJava.autoConfigured[IO]().flatMap { otelJava =>
       OpenTelemetryAppender.install(otelJava.underlying)
 
-      RuntimeMetrics.builder(otelJava.underlying)
+      /*RuntimeMetrics.builder(otelJava.underlying)
         .enableAllFeatures()
         .enableExperimentalJmxTelemetry()
-        .build()
+        .build()*/
 
       for {
         context <- CommonApp.Context.resource[IO](
@@ -61,7 +60,7 @@ trait CommonAppPlatform extends ResourceApp {
         )
         _ <- {
           import context.given
-          IOMetrics.register[IO]()
+          RuntimeMetrics.register[IO]
         }
         exitCode <- run(context)
       } yield
