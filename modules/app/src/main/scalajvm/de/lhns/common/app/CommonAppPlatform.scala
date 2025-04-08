@@ -1,24 +1,25 @@
 package de.lhns.common.app
 
+import cats.effect.*
 import cats.effect.std.Env
-import cats.effect.{ExitCode, IO, Resource, ResourceApp}
+import cats.effect.unsafe.IORuntime
 import com.github.markusbernhardt.proxy.ProxySearch
 import de.lhns.trustmanager.TrustManagers.*
 import io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender
-import io.opentelemetry.instrumentation.runtimemetrics.java17.RuntimeMetrics
 import org.slf4j.bridge.SLF4JBridgeHandler
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-import org.typelevel.otel4s.experimental.metrics.IOMetrics
+import org.typelevel.otel4s.experimental.metrics.RuntimeMetrics
+import org.typelevel.otel4s.instrumentation.ce.IORuntimeMetrics
 import org.typelevel.otel4s.metrics.Meter
 import org.typelevel.otel4s.oteljava.OtelJava
 
 import java.net.ProxySelector
 import scala.util.chaining.*
 
-trait CommonAppPlatform extends ResourceApp {
+trait CommonAppPlatform extends IOApp {
   self: CommonApp =>
 
-  override def run(args: List[String]): Resource[IO, ExitCode] = {
+  override def run(args: List[String]): IO[ExitCode] = {
     ProxySelector.setDefault(
       Option(new ProxySearch().tap { s =>
         s.addStrategy(ProxySearch.Strategy.JAVA)
@@ -46,10 +47,10 @@ trait CommonAppPlatform extends ResourceApp {
     OtelJava.autoConfigured[IO]().flatMap { otelJava =>
       OpenTelemetryAppender.install(otelJava.underlying)
 
-      RuntimeMetrics.builder(otelJava.underlying)
+      /*RuntimeMetrics.builder(otelJava.underlying)
         .enableAllFeatures()
         .enableExperimentalJmxTelemetry()
-        .build()
+        .build()*/
 
       for {
         context <- CommonApp.Context.resource[IO](
@@ -61,11 +62,16 @@ trait CommonAppPlatform extends ResourceApp {
         )
         _ <- {
           import context.given
-          IOMetrics.register[IO]()
+          RuntimeMetrics.register[IO]
+        }
+        rt = Option(runtime).getOrElse(IORuntime.global)
+        _ <- {
+          import context.given
+          IORuntimeMetrics.register[IO](rt.metrics, IORuntimeMetrics.Config.default)
         }
         exitCode <- run(context)
       } yield
         exitCode
     }
-  }
+  }.use(IO.pure)
 }

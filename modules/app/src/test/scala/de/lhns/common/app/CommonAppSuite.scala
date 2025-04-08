@@ -17,6 +17,6 @@ class CommonAppSuite extends CatsEffectSuite {
   }
 
   test("create CommonApp") {
-    CommonAppTest.run(List.empty).use_
+    CommonAppTest.run(List.empty)
   }
 }
