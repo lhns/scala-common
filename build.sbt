@@ -108,13 +108,13 @@ lazy val root: Project = project.in(file("."))
     publishArtifact := false,
     publish / skip := true
   )
-  .aggregate(core.projectRefs*)
-  .aggregate(app.projectRefs*)
-  .aggregate(http.projectRefs*)
-  .aggregate(httpClient.projectRefs*)
-  .aggregate(httpServer.projectRefs*)
-  .aggregate(skunk.projectRefs*)
-  .aggregate(s3.projectRefs*)
+  .aggregate(core.projectRefs *)
+  .aggregate(app.projectRefs *)
+  .aggregate(http.projectRefs *)
+  .aggregate(httpClient.projectRefs *)
+  .aggregate(httpServer.projectRefs *)
+  .aggregate(skunk.projectRefs *)
+  .aggregate(s3.projectRefs *)
 
 lazy val core = projectMatrix.in(file("modules/core"))
   .settings(commonSettings)
@@ -142,7 +142,10 @@ lazy val app = projectMatrix.in(file("modules/app"))
   .dependsOn(core % "compile->compile;test->test")
   .settings(commonSettings)
   .settings(
-    name := "scala-common-app"
+    name := "scala-common-app",
+    libraryDependencies ++= Seq(
+      "org.typelevel" %%% "otel4s-instrumentation-metrics" % V.otel4s
+    )
   )
   .jvmPlatform(scalaVersions, Seq(
     libraryDependencies ++= Seq(
@@ -157,7 +160,7 @@ lazy val app = projectMatrix.in(file("modules/app"))
       "org.slf4j" % "jul-to-slf4j" % V.julToSlf4j,
       "org.typelevel" %% "log4cats-slf4j" % V.log4Cats,
       "org.typelevel" %% "otel4s-experimental-metrics" % V.otel4sExperimental,
-      "org.typelevel" %% "otel4s-oteljava" % V.otel4s
+      "org.typelevel" %% "otel4s-oteljava" % V.otel4s,
     )
   ))
   .jsPlatform(scalaVersions, Seq(

@@ -1,18 +1,19 @@
 package de.lhns.common.app
 
+import cats.effect.*
 import cats.effect.std.Env
 import cats.effect.syntax.all.*
-import cats.effect.{ExitCode, IO, Resource, ResourceApp}
 import cats.mtl.Local
 import cats.{Applicative, Monad}
 import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.otel4s.Otel4s
 import org.typelevel.otel4s.baggage.{Baggage, BaggageManager}
 import org.typelevel.otel4s.context.propagation.ContextPropagators
+import org.typelevel.otel4s.instrumentation.ce.IORuntimeMetrics
 import org.typelevel.otel4s.metrics.{Meter, MeterProvider}
 import org.typelevel.otel4s.trace.{Tracer, TracerProvider}
 
-abstract class CommonApp extends ResourceApp with CommonAppPlatform {
+abstract class CommonApp extends IOApp with CommonAppPlatform {
   protected[app] def scopeName: String = getClass.getName
 
   protected[app] def allowInsecure: Boolean = false
