@@ -60,8 +60,18 @@ object CommonApp {
 
       override lazy val tracerProvider: TracerProvider[F] = TracerProvider.noop[F]
 
-      override lazy val baggageManager: BaggageManager[F] = new BaggageManager[F] with NoopLocal[Baggage] {
-        override def ask[E2 >: Baggage]: F[E2] = Applicative[F].pure(Baggage.empty)
+      override lazy val baggageManager: BaggageManager[F] = new BaggageManager[F] {
+        override def applicative: Applicative[F] = Applicative[F]
+
+        override val current: F[Baggage] = Applicative[F].pure(Baggage.empty)
+
+        override def get(key: String): F[Option[Baggage.Entry]] = Applicative[F].pure(None)
+
+        override def getValue(key: String): F[Option[String]] = Applicative[F].pure(None)
+
+        override def local[A](modify: Baggage => Baggage)(fa: F[A]): F[A] = fa
+
+        override def scope[A](baggage: Baggage)(fa: F[A]): F[A] = local(_ => baggage)(fa)
       }
     }
 
