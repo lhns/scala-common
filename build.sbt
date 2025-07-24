@@ -7,7 +7,7 @@ ThisBuild / version := (core.projectRefs.head / version).value
 name := (app.projectRefs.head / name).value
 
 val V = new {
-  val catsEffect = "3.6.2"
+  val catsEffect = "3.6.3"
   val catsTagless = "0.16.3"
   val dottyCpsAsync = "0.9.23"
   val dumbo = "0.5.5"
