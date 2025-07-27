@@ -6,20 +6,22 @@ import cats.effect.{Async, Resource}
 import cats.syntax.all.*
 import cps.*
 import cps.monads.catsEffect.given
+import dumbo.logging.{LogLevel, Logger as DumboLogger}
 import dumbo.{ConnectionConfig, DumboWithResourcesPartiallyApplied}
 import fs2.io.net.Network
+import org.typelevel.log4cats.{Logger, LoggerFactory}
 import org.typelevel.otel4s.Attribute
 import org.typelevel.otel4s.trace.Tracer
-import skunk.util.{BrokenPipePool, Typer}
-import skunk.{RedactionStrategy, SSL, Session}
+import skunk.Session.Credentials
+import skunk.{RedactionStrategy, SSL, Session, TypingStrategy}
 
 import scala.concurrent.duration.Duration
 
 object SkunkSessionPool {
   val defaultMigrations = "db/migration"
 
-  def apply[
-    F[_] : Async : Tracer : Network : Console
+  def builder[
+    F[_] : Async : Tracer : LoggerFactory : Network : Console
   ](
      migrations: Option[DumboWithResourcesPartiallyApplied[F]],
      host: String,
@@ -27,17 +29,17 @@ object SkunkSessionPool {
      user: String,
      database: String,
      password: Option[String] = none,
-     max: Int,
-     debug: Boolean = false,
-     strategy: Typer.Strategy = Typer.Strategy.BuiltinsOnly,
      ssl: SSL = SSL.None,
-     parameters: Map[String, String] = Session.DefaultConnectionParameters,
-     commandCache: Int = 1024,
-     queryCache: Int = 1024,
-     parseCache: Int = 1024,
-     readTimeout: Duration = Duration.Inf,
-     redactionStrategy: RedactionStrategy = RedactionStrategy.OptIn,
-   ): Resource[F, Resource[F, Session[F]]] = async[Resource[F, _]] {
+   ): Resource[F, Session.Builder[F]] = async[Resource[F, _]] {
+    given Logger[F] = LoggerFactory[F].getLogger
+
+    given DumboLogger[F] = new DumboLogger[F] {
+      override def apply(level: LogLevel, message: => String): F[Unit] = level match {
+        case LogLevel.Info => Logger[F].info(message)
+        case LogLevel.Warn => Logger[F].warn(message)
+      }
+    }
+
     val connectionConfig = ConnectionConfig(
       host = host,
       port = port,
@@ -66,22 +68,53 @@ object SkunkSessionPool {
       case None =>
     }
 
-    BrokenPipePool.pooled(
+    Session.Builder[F]
+      .withHost(host)
+      .withPort(port)
+      .withCredentials(Credentials(user, password))
+      .withDatabase(database)
+      .withSSL(ssl)
+  }
+
+  @deprecated("use SkunkSessionPool.builder instead")
+  def apply[
+    F[_] : Async : Tracer : LoggerFactory : Network : Console
+  ](
+     migrations: Option[DumboWithResourcesPartiallyApplied[F]],
+     host: String,
+     port: Int = 5432,
+     user: String,
+     database: String,
+     password: Option[String] = none,
+     max: Int,
+     debug: Boolean = false,
+     strategy: TypingStrategy = TypingStrategy.BuiltinsOnly,
+     ssl: SSL = SSL.None,
+     parameters: Map[String, String] = Session.DefaultConnectionParameters,
+     commandCache: Int = 1024,
+     queryCache: Int = 1024,
+     parseCache: Int = 1024,
+     readTimeout: Duration = Duration.Inf,
+     redactionStrategy: RedactionStrategy = RedactionStrategy.OptIn,
+   ): Resource[F, Resource[F, Session[F]]] =
+    builder(
+      migrations = migrations,
       host = host,
       port = port,
       user = user,
       database = database,
       password = password,
-      max = max,
-      debug = debug,
-      strategy = strategy,
-      ssl = ssl,
-      parameters = parameters,
-      commandCache = commandCache,
-      queryCache = queryCache,
-      parseCache = parseCache,
-      readTimeout = readTimeout,
-      redactionStrategy = redactionStrategy
-    ).await
-  }
+      ssl = ssl
+    ).flatMap { builder =>
+      builder
+        .withDebug(debug)
+        .withTypingStrategy(strategy)
+        .withConnectionParameters(parameters)
+        .withCommandCacheSize(commandCache)
+        .withQueryCacheSize(queryCache)
+        .withParseCacheSize(parseCache)
+        .withReadTimeout(readTimeout)
+        .withRedactionStrategy(redactionStrategy)
+        .pooled(max)
+    }
 }
