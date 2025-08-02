@@ -38,7 +38,7 @@ object HttpClient {
         .toResource
       client <- HttpClientPlatform.resource[F]
     } yield
-      tracerMiddleware.wrap(
+      tracerMiddleware.wrapClient(
         Metrics(
           metricsOps,
           classifierF
