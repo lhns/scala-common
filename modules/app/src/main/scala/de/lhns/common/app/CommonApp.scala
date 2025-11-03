@@ -1,16 +1,17 @@
 package de.lhns.common.app
 
+import cats.Applicative
 import cats.effect.*
 import cats.effect.std.Env
 import cats.effect.syntax.all.*
 import cats.mtl.Local
-import cats.{Applicative, Monad}
+import cats.syntax.all.*
 import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.otel4s.Otel4s
-import org.typelevel.otel4s.baggage.{Baggage, BaggageManager}
-import org.typelevel.otel4s.context.propagation.ContextPropagators
-import org.typelevel.otel4s.instrumentation.ce.IORuntimeMetrics
+import org.typelevel.otel4s.context.LocalProvider
 import org.typelevel.otel4s.metrics.{Meter, MeterProvider}
+import org.typelevel.otel4s.sdk.OpenTelemetrySdk
+import org.typelevel.otel4s.sdk.context.{LocalContextProvider, Context as OtelContext}
 import org.typelevel.otel4s.trace.{Tracer, TracerProvider}
 
 abstract class CommonApp extends IOApp with CommonAppPlatform {
@@ -41,38 +42,18 @@ object CommonApp {
   }
 
   object Context {
-    private[app] def otelNoop[F[_] : Applicative]: Otel4s[F] = new Otel4s[F] {
-      override type Ctx = Unit
-
+    private[app] def otelNoop[F[_] : Applicative]: F[Otel4s[F]] = {
       trait NoopLocal[E] extends Local[F, E] {
         override def local[A](fa: F[A])(f: E => E): F[A] = fa
 
         override def applicative: Applicative[F] = Applicative[F]
       }
 
-      override given localContext: Local[F, Unit] = new NoopLocal[Unit] {
-        override def ask[E2 >: Unit]: F[E2] = Applicative[F].pure(())
-      }
+      given localContextProvider: LocalContextProvider[F] = LocalProvider.fromLocal[F, OtelContext](new NoopLocal[OtelContext] {
+        override def ask[E2 >: OtelContext]: F[E2] = Applicative[F].pure(OtelContext.root)
+      })
 
-      override lazy val propagators: ContextPropagators[Ctx] = ContextPropagators.noop[Ctx]
-
-      override lazy val meterProvider: MeterProvider[F] = MeterProvider.noop[F]
-
-      override lazy val tracerProvider: TracerProvider[F] = TracerProvider.noop[F]
-
-      override lazy val baggageManager: BaggageManager[F] = new BaggageManager[F] {
-        override def applicative: Applicative[F] = Applicative[F]
-
-        override val current: F[Baggage] = Applicative[F].pure(Baggage.empty)
-
-        override def get(key: String): F[Option[Baggage.Entry]] = Applicative[F].pure(None)
-
-        override def getValue(key: String): F[Option[String]] = Applicative[F].pure(None)
-
-        override def local[A](modify: Baggage => Baggage)(fa: F[A]): F[A] = fa
-
-        override def scope[A](baggage: Baggage)(fa: F[A]): F[A] = local(_ => baggage)(fa)
-      }
+      OpenTelemetrySdk.noop[F].widen[Otel4s[F]]
     }
 
     def resource[F[_]](
