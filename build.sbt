@@ -18,7 +18,7 @@ val V = new {
   val http4sOtel4s = "0.15.0"
   val julToSlf4j = "2.0.17"
   val log4Cats = "2.7.1"
-  val logbackClassic = "1.5.19"
+  val logbackClassic = "1.5.20"
   val munitCatsEffect = "2.1.0"
   val otel4s = "0.14.0"
   val otel4sExperimental = "0.8.0"
@@ -32,7 +32,7 @@ val V = new {
   val scalajsJavaSecurerandom = "1.0.0"
   val skunk = "1.0.0-M11"
   val sttpShared = "1.5.0"
-  val tapir = "1.11.49"
+  val tapir = "1.11.50"
   val trustmanagerUtils = "1.1.0"
   val fs2BlobStoreS3 = "0.9.15"
 }
