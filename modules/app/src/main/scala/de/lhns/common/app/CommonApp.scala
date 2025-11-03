@@ -52,7 +52,7 @@ object CommonApp {
       given localContextProvider: LocalContextProvider[F] = LocalProvider.fromLocal[F, OtelContext](new NoopLocal[OtelContext] {
         override def ask[E2 >: OtelContext]: F[E2] = Applicative[F].pure(OtelContext.root)
       })
-no
+
       OpenTelemetrySdk.noop[F].widen[Otel4s[F]]
     }
 
