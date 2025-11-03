@@ -129,6 +129,7 @@ lazy val core = projectMatrix.in(file("modules/core"))
       "org.typelevel" %%% "cats-tagless-core" % V.catsTagless,
       "org.typelevel" %%% "log4cats-core" % V.log4Cats,
       "org.typelevel" %%% "otel4s-core" % V.otel4s,
+      "org.typelevel" %%% "otel4s-sdk" % V.otel4s,
     ),
   )
   .jvmPlatform(scalaVersions)
