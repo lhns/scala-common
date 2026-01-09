@@ -7,6 +7,7 @@ import cats.effect.std.syntax.all.*
 import blobstore.s3.S3Store
 import cats.effect.{Async, IO}
 import software.amazon.awssdk.auth.credentials.{AwsBasicCredentials, StaticCredentialsProvider}
+import software.amazon.awssdk.core.checksums.{RequestChecksumCalculation, ResponseChecksumValidation}
 import software.amazon.awssdk.http.nio.netty.{NettyNioAsyncHttpClient, ProxyConfiguration}
 import software.amazon.awssdk.services.s3.{S3AsyncClient, S3Configuration}
 
@@ -24,6 +25,9 @@ package object s3 {
           secretAccessKey)))
         .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build)
         .endpointOverride(s3Endpoint)
+        // some backends don't support the new aws s3 data-integrity feature
+        .requestChecksumCalculation(RequestChecksumCalculation.WHEN_REQUIRED)
+        .responseChecksumValidation(ResponseChecksumValidation.WHEN_REQUIRED)
         .httpClientBuilder(
           NettyNioAsyncHttpClient
             .builder()
