@@ -22,6 +22,7 @@ val V = new {
   val munitCatsEffect = "2.1.0"
   val otel4s = "0.15.1"
   val otel4sExperimental = "0.9.0"
+  val otel4sSdk = "0.16.1"
   val otelAutoconfigure = "1.57.0"
   val otelIncubator = "1.54.1-alpha"
   val otelLogback = "2.20.1-alpha"
@@ -129,7 +130,7 @@ lazy val core = projectMatrix.in(file("modules/core"))
       "org.typelevel" %%% "cats-tagless-core" % V.catsTagless,
       "org.typelevel" %%% "log4cats-core" % V.log4Cats,
       "org.typelevel" %%% "otel4s-core" % V.otel4s,
-      "org.typelevel" %%% "otel4s-sdk" % V.otel4s,
+      "org.typelevel" %%% "otel4s-sdk" % V.otel4sSdk,
     ),
   )
   .jvmPlatform(scalaVersions)
