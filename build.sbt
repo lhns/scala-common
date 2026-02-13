@@ -15,18 +15,19 @@ val V = new {
   val http4s = "0.23.33"
   val http4sDom = "0.2.11"
   val http4sJdkHttpClient = "0.10.0"
-  val http4sOtel4s = "0.15.0"
+  val http4sOtel4s = "0.16.0"
   val julToSlf4j = "2.0.17"
   val log4Cats = "2.7.1"
   val logbackClassic = "1.5.29"
   val munitCatsEffect = "2.1.0"
-  val otel4s = "0.14.0"
-  val otel4sExperimental = "0.8.1"
+  val otel4s = "0.15.1"
+  val otel4sExperimental = "0.9.0"
+  val otel4sSdk = "0.16.1"
   val otelAutoconfigure = "1.59.0"
-  val otelIncubator = "1.54.1-alpha"
-  val otelLogback = "2.20.1-alpha"
+  val otelIncubator = "1.59.0-alpha"
+  val otelLogback = "2.25.0-alpha"
   val otelOtlp = "1.59.0"
-  val otelRuntime = "2.20.1-alpha"
+  val otelRuntime = "2.25.0-alpha"
   val proxyVole = "1.1.9"
   val scalaJavaTime = "2.6.0"
   val scalajsJavaSecurerandom = "1.0.0"
@@ -129,7 +130,7 @@ lazy val core = projectMatrix.in(file("modules/core"))
       "org.typelevel" %%% "cats-tagless-core" % V.catsTagless,
       "org.typelevel" %%% "log4cats-core" % V.log4Cats,
       "org.typelevel" %%% "otel4s-core" % V.otel4s,
-      "org.typelevel" %%% "otel4s-sdk" % V.otel4s,
+      "org.typelevel" %%% "otel4s-sdk" % V.otel4sSdk,
     ),
   )
   .jvmPlatform(scalaVersions)
