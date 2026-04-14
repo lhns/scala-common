@@ -8,10 +8,9 @@ import de.lhns.trustmanager.TrustManagers.*
 import io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender
 import org.slf4j.bridge.SLF4JBridgeHandler
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-import org.typelevel.otel4s.experimental.metrics.RuntimeMetrics
 import org.typelevel.otel4s.instrumentation.ce.IORuntimeMetrics
-import org.typelevel.otel4s.metrics.Meter
 import org.typelevel.otel4s.oteljava.OtelJava
+import org.typelevel.otel4s.sdk.contrib.metrics.runtime.RuntimeMetrics
 
 import java.net.ProxySelector
 import scala.util.chaining.*
