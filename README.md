@@ -14,11 +14,11 @@ Common utilities to build WebServices.
 
 ```sbt
 libraryDependencies ++= Seq(
-  "de.lhns" %% "scala-common-core" % "0.12.0",
-  "de.lhns" %% "scala-common-app" % "0.12.0",
-  "de.lhns" %% "scala-common-http-client" % "0.12.0",
-  "de.lhns" %% "scala-common-http-server" % "0.12.0",
-  "de.lhns" %% "scala-common-skunk" % "0.12.0"
+  "de.lhns" %% "scala-common-core" % "0.13.2",
+  "de.lhns" %% "scala-common-app" % "0.13.2",
+  "de.lhns" %% "scala-common-http-client" % "0.13.2",
+  "de.lhns" %% "scala-common-http-server" % "0.13.2",
+  "de.lhns" %% "scala-common-skunk" % "0.13.2"
 )
 ```
 
