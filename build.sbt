@@ -35,7 +35,7 @@ val V = new {
   val sttpShared = "1.5.0"
   val tapir = "1.13.15"
   val trustmanagerUtils = "1.1.0"
-  val fs2BlobStoreS3 = "0.10.1"
+  val fs2BlobStoreS3 = "0.11.0"
 }
 
 lazy val commonSettings: SettingsDefinition = Def.settings(
