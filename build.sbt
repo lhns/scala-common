@@ -10,32 +10,32 @@ val V = new {
   val catsEffect = "3.7.1"
   val catsTagless = "0.16.5"
   val dottyCpsAsync = "0.9.23"
-  val dumbo = "0.8.1"
+  val dumbo = "0.10.3"
   val fs2 = "3.14.0"
-  val http4s = "0.23.34"
+  val http4s = "0.23.38"
   val http4sDom = "0.2.11"
   val http4sJdkHttpClient = "0.10.0"
-  val http4sOtel4s = "0.17.0"
+  val http4sOtel4s = "0.20.0"
   val julToSlf4j = "2.0.20"
   val log4Cats = "2.8.0"
   val logbackClassic = "1.5.38"
-  val munitCatsEffect = "2.2.0"
-  val otel4s = "0.16.0"
-  val otel4sExperimental = "0.10.0"
-  val otel4sSdk = "0.18.0"
-  val otelAutoconfigure = "1.63.0"
-  val otelIncubator = "1.59.0-alpha"
-  val otelLogback = "2.25.0-alpha"
-  val otelOtlp = "1.63.0"
-  val otelRuntime = "2.25.0-alpha"
+  val munitCatsEffect = "2.2.1"
+  val otel4s = "1.2.0"
+  val otel4sExperimental = "0.11.0"
+  val otel4sSdk = "0.19.5"
+  val otelAutoconfigure = "1.68.0"
+  val otelIncubator = "1.68.0-alpha"
+  val otelLogback = "2.33.1-alpha"
+  val otelOtlp = "1.68.0"
+  val otelRuntime = "2.33.1-alpha"
   val proxyVole = "2.0.2"
   val scalaJavaTime = "2.7.0"
   val scalajsJavaSecurerandom = "1.0.0"
-  val skunk = "1.0.0-M12"
+  val skunk = "1.0.0"
   val sttpShared = "1.5.3"
-  val tapir = "1.13.23"
+  val tapir = "1.13.33"
   val trustmanagerUtils = "1.1.0"
-  val fs2BlobStoreS3 = "0.10.1"
+  val fs2BlobStoreS3 = "0.12.1"
 }
 
 lazy val commonSettings: SettingsDefinition = Def.settings(
@@ -159,7 +159,7 @@ lazy val app = projectMatrix.in(file("modules/app"))
       "io.opentelemetry" % "opentelemetry-sdk-extension-autoconfigure" % V.otelAutoconfigure,
       "io.opentelemetry" % "opentelemetry-sdk-extension-incubator" % V.otelIncubator,
       "io.opentelemetry.instrumentation" % "opentelemetry-logback-appender-1.0" % V.otelLogback,
-      "io.opentelemetry.instrumentation" % "opentelemetry-runtime-telemetry-java17" % V.otelRuntime,
+      "io.opentelemetry.instrumentation" % "opentelemetry-runtime-telemetry" % V.otelRuntime,
       "org.bidib.com.github.markusbernhardt" % "proxy-vole" % V.proxyVole,
       "org.slf4j" % "jul-to-slf4j" % V.julToSlf4j,
       "org.typelevel" %% "log4cats-slf4j" % V.log4Cats,
@@ -232,7 +232,8 @@ lazy val skunk = projectMatrix.in(file("modules/skunk"))
   .settings(commonSettings)
   .settings(
     name := "scala-common-skunk",
-    libraryDependencySchemes += "org.typelevel" %% "otel4s-core-trace" % VersionScheme.Always,
+    libraryDependencySchemes ++= Seq("otel4s-core", "otel4s-core-trace", "otel4s-semconv", "otel4s-semconv-metrics")
+      .map("org.typelevel" %% _ % VersionScheme.Always),
     libraryDependencies ++= Seq(
       "dev.rolang" %% "dumbo" % V.dumbo,
       "org.tpolecat" %% "skunk-core" % V.skunk,

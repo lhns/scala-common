@@ -11,6 +11,7 @@ import dumbo.{ConnectionConfig, DumboWithResourcesPartiallyApplied}
 import fs2.io.net.Network
 import org.typelevel.log4cats.{Logger, LoggerFactory}
 import org.typelevel.otel4s.Attribute
+import org.typelevel.otel4s.metrics.Meter
 import org.typelevel.otel4s.trace.Tracer
 import skunk.Session.Credentials
 import skunk.{RedactionStrategy, SSL, Session, TypingStrategy}
@@ -21,7 +22,7 @@ object SkunkSessionPool {
   val defaultMigrations = "db/migration"
 
   def builder[
-    F[_] : Async : Tracer : LoggerFactory : Network : Console
+    F[_] : Async : Tracer : Meter : LoggerFactory : Network : Console
   ](
      migrations: Option[DumboWithResourcesPartiallyApplied[F]],
      host: String,
@@ -78,7 +79,7 @@ object SkunkSessionPool {
 
   @deprecated("use SkunkSessionPool.builder instead")
   def apply[
-    F[_] : Async : Tracer : LoggerFactory : Network : Console
+    F[_] : Async : Tracer : Meter : LoggerFactory : Network : Console
   ](
      migrations: Option[DumboWithResourcesPartiallyApplied[F]],
      host: String,
